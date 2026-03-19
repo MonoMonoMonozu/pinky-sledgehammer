@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ピンキースレッジハンマー</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+
+  :root {
+    --pink:    #E8456A;
+    --pink2:   #F07090;
+    --pink-lt: #FFD6E0;
+    --purple:  #7B6F8A;
+    --purple2: #9B8FAA;
+    --hyper:   #FF1493;
+    --hyper-bg:#FFF0FB;
+    --bg:      #FFF0F4;
+    --text:    #3A2030;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(232,69,106,0.12) 1.5px, transparent 1.5px);
+    background-size: 28px 28px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ヘッダー */
+  header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+
+  /* キャラSVGエリア */
+  .chara-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 0;
+    margin-bottom: 4px;
+    position: relative;
+  }
+
+  .chara-svg {
+    width: 90px;
+    height: 90px;
+    animation: charaFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes charaFloat {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+
+  /* ハンマーSVG */
+  .hammer-svg {
+    width: 64px;
+    height: 64px;
+    margin-left: -10px;
+    animation: hammerSwing 2s ease-in-out infinite;
+    transform-origin: 80% 80%;
+  }
+
+  @keyframes hammerSwing {
+    0%,100% { transform: rotate(-15deg); }
+    50%      { transform: rotate(15deg); }
+  }
+
+  h1 {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: clamp(22px, 6vw, 36px);
+    font-weight: 900;
+    color: var(--pink);
+    letter-spacing: 0.05em;
+    text-shadow: 3px 3px 0 var(--pink-lt), 4px 4px 0 var(--purple);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .tagline {
+    font-size: 13px;
+    color: var(--purple);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+
+  /* 吹き出し */
+  .bubble {
+    background: white;
+    border: 2.5px solid var(--pink);
+    border-radius: 20px;
+    padding: 14px 20px;
+    margin-bottom: 28px;
+    position: relative;
+    font-size: 14px;
+    line-height: 1.7;
+    box-shadow: 3px 3px 0 var(--pink-lt);
+  }
+
+  .bubble::after {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 30px;
+    border: 8px solid transparent;
+    border-bottom-color: var(--pink);
+  }
+
+  .bubble::before {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 31px;
+    border: 7px solid transparent;
+    border-bottom-color: white;
+    z-index: 1;
+  }
+
+  /* 入力 */
+  .input-wrap {
+    background: white;
+    border: 2.5px solid var(--pink2);
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 3px 3px 0 var(--pink-lt);
+  }
+
+  .input-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--pink);
+    letter-spacing: 0.2em;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    resize: none;
+    min-height: 100px;
+    line-height: 1.8;
+    background: transparent;
+  }
+
+  textarea::placeholder { color: #C0A0AC; }
+
+  .char-hint {
+    text-align: right;
+    font-size: 11px;
+    color: var(--purple2);
+    margin-top: 8px;
+  }
+
+  /* ボタン */
+  .forge-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--pink);
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #B02050, 3px 6px 0 var(--purple);
+    transition: all 0.1s ease;
+    position: relative;
+    top: 0;
+    margin-bottom: 36px;
+  }
+
+  .forge-btn:hover { background: #F05078; top: -2px; box-shadow: 0 6px 0 #B02050, 3px 8px 0 var(--purple); }
+  .forge-btn:active { top: 4px; box-shadow: none; }
+  .forge-btn:disabled { opacity: 0.6; pointer-events: none; }
+
+  /* ローディング */
+  .loading { text-align: center; padding: 30px; display: none; }
+  .loading.show { display: block; }
+
+  .bounce-dots { display: inline-flex; gap: 8px; margin-bottom: 12px; }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--pink);
+    animation: bounce 0.8s ease-in-out infinite;
+  }
+  .dot:nth-child(2) { animation-delay: 0.15s; background: var(--purple); }
+  .dot:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-12px); }
+  }
+
+  .loading-text { font-size: 13px; color: var(--purple); font-weight: 500; }
+
+  /* 出力 */
+  .output-section { opacity: 0; transform: translateY(16px); transition: all 0.5s ease; }
+  .output-section.visible { opacity: 1; transform: translateY(0); }
+
+  .essence-banner {
+    background: var(--pink);
+    color: white;
+    border-radius: 16px;
+    padding: 16px 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 3px 3px 0 var(--purple);
+  }
+
+  .essence-label { font-size: 10px; letter-spacing: 0.3em; opacity: 0.8; margin-bottom: 6px; }
+  .essence-text { font-family: 'Zen Maru Gothic', sans-serif; font-size: 18px; font-weight: 700; }
+
+  /* カード */
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 2.5px solid transparent;
+    box-shadow: 3px 3px 0 var(--pink-lt);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: slideIn 0.4s ease forwards;
+  }
+
+  .card:hover { transform: translateY(-2px); box-shadow: 5px 6px 0 var(--pink-lt); }
+
+  @keyframes slideIn { to { opacity: 1; transform: translateY(0); } }
+
+  .card.normal  { border-color: var(--purple2); }
+  .card.joy     { border-color: var(--pink2); }
+  .card.extreme { border-color: var(--pink); }
+  .card.hyper   {
+    border-color: var(--hyper);
+    background: var(--hyper-bg);
+    box-shadow: 3px 3px 0 #FFB0E8, 0 0 20px rgba(255,20,147,0.15);
+  }
+
+  .card.kenja {
+    border-color: var(--purple);
+    background: #F5F0FF;
+    box-shadow: 3px 3px 0 #D0C0E8, 0 0 24px rgba(123,111,138,0.2);
+  }
+
+  .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+
+  .card-badge {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 50px;
+    letter-spacing: 0.15em;
+  }
+
+  .normal  .card-badge { background: var(--purple2); color: white; }
+  .joy     .card-badge { background: var(--pink2);   color: white; }
+  .extreme .card-badge { background: var(--pink);    color: white; }
+  .hyper   .card-badge {
+    background: linear-gradient(135deg, var(--hyper), #9B30FF);
+    color: white;
+    animation: glowBadge 1.5s ease-in-out infinite alternate;
+  }
+
+  .kenja .card-badge {
+    background: var(--purple);
+    color: white;
+    letter-spacing: 0.05em;
+  }
+
+  .kenja .card-title {
+    font-style: italic;
+    color: var(--purple);
+  }
+
+  .kenja .card-action {
+    background: #EDE8F8;
+    color: var(--purple);
+  }
+
+  @keyframes glowBadge {
+    from { box-shadow: 0 0 6px rgba(255,20,147,0.5); }
+    to   { box-shadow: 0 0 14px rgba(255,20,147,0.9); }
+  }
+
+  .card-emoji { font-size: 22px; }
+  .card-title {
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 16px; font-weight: 700;
+    color: var(--text); margin-bottom: 8px; line-height: 1.5;
+  }
+  .card-body { font-size: 13px; color: #5A4050; line-height: 1.85; margin-bottom: 12px; }
+  .card-action {
+    background: var(--bg); border-radius: 10px;
+    padding: 10px 14px; font-size: 12px;
+    color: var(--pink); font-weight: 500;
+  }
+  .card-action::before { content: '→ '; }
+
+  .hyper .card-action {
+    background: #FFE0F8;
+    color: var(--hyper);
+  }
+
+  /* もっと飛ぶボタン */
+  .more-btn-wrap {
+    text-align: center;
+    margin: 8px 0 24px;
+    display: none;
+  }
+
+  .more-btn-wrap.show { display: block; }
+
+  .more-btn {
+    background: white;
+    border: 2.5px dashed var(--hyper);
+    border-radius: 50px;
+    color: var(--hyper);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 12px 28px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: all 0.2s ease;
+    animation: dashPulse 1.5s ease-in-out infinite;
+  }
+
+  .more-btn:hover {
+    background: var(--hyper);
+    color: white;
+    border-style: solid;
+    animation: none;
+    transform: scale(1.04);
+  }
+
+  @keyframes dashPulse {
+    0%,100% { box-shadow: 0 0 0 rgba(255,20,147,0); }
+    50%      { box-shadow: 0 0 12px rgba(255,20,147,0.35); }
+  }
+
+  /* hyperローディング */
+  .hyper-loading { text-align: center; padding: 20px; display: none; }
+  .hyper-loading.show { display: block; }
+  .hyper-loading-text { font-size: 13px; color: var(--hyper); font-weight: 700; letter-spacing: 0.1em; }
+
+  .error-msg { text-align: center; color: var(--pink); font-size: 13px; padding: 20px; display: none; }
+
+  footer { text-align: center; margin-top: 60px; font-size: 11px; color: var(--purple2); letter-spacing: 0.15em; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="chara-wrap">
+      <!-- オリジナルキャラ：ピンクの丸い鍛冶屋ちゃん -->
+      <svg class="chara-svg" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+        <!-- 影 -->
+        <ellipse cx="45" cy="84" rx="22" ry="5" fill="rgba(232,69,106,0.15)"/>
+        <!-- 体（丸い） -->
+        <circle cx="45" cy="52" r="26" fill="#E8456A"/>
+        <!-- 顔ハイライト -->
+        <circle cx="38" cy="44" r="8" fill="#F07090" opacity="0.4"/>
+        <!-- 頭 -->
+        <circle cx="45" cy="26" r="18" fill="#E8456A"/>
+        <!-- 頭のぽっち -->
+        <ellipse cx="45" cy="10" rx="7" ry="9" fill="#F9C0CC"/>
+        <!-- 目（白目） -->
+        <circle cx="38" cy="24" r="6" fill="white"/>
+        <circle cx="52" cy="24" r="6" fill="white"/>
+        <!-- 目（黒目） -->
+        <circle cx="39" cy="25" r="3.5" fill="#3A2030"/>
+        <circle cx="53" cy="25" r="3.5" fill="#3A2030"/>
+        <!-- 目のハイライト -->
+        <circle cx="40.5" cy="23.5" r="1.2" fill="white"/>
+        <circle cx="54.5" cy="23.5" r="1.2" fill="white"/>
+        <!-- 眉（むっとしてる） -->
+        <line x1="33" y1="18" x2="44" y2="20" stroke="#3A2030" stroke-width="2" stroke-linecap="round"/>
+        <line x1="47" y1="20" x2="57" y2="18" stroke="#3A2030" stroke-width="2" stroke-linecap="round"/>
+        <!-- 口（への字） -->
+        <path d="M38 32 Q45 29 52 32" stroke="#3A2030" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- 頬っぺた -->
+        <circle cx="30" cy="30" r="5" fill="#F9A0B4" opacity="0.6"/>
+        <circle cx="60" cy="30" r="5" fill="#F9A0B4" opacity="0.6"/>
+        <!-- 左腕 -->
+        <circle cx="18" cy="54" r="7" fill="#E8456A"/>
+        <circle cx="13" cy="48" r="6" fill="#E8456A"/>
+        <!-- 右腕（ハンマー持ち） -->
+        <circle cx="72" cy="50" r="7" fill="#E8456A"/>
+        <!-- 足 -->
+        <ellipse cx="36" cy="76" rx="8" ry="6" fill="#D03058"/>
+        <ellipse cx="54" cy="76" rx="8" ry="6" fill="#D03058"/>
+        <!-- 胸のプレート -->
+        <rect x="36" y="50" width="18" height="14" rx="4" fill="#9B8FAA" opacity="0.8"/>
+        <rect x="39" y="53" width="12" height="8" rx="2" fill="#7B6F8A"/>
+      </svg>
+
+      <!-- ハンマー -->
+      <svg class="hammer-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <!-- 柄 -->
+        <rect x="28" y="20" width="8" height="36" rx="3" fill="#9B8FAA"/>
+        <!-- ヘッド -->
+        <rect x="12" y="8" width="40" height="20" rx="5" fill="#7B6F8A"/>
+        <!-- ハイライト -->
+        <rect x="14" y="10" width="36" height="7" rx="3" fill="#9B8FAA" opacity="0.5"/>
+        <!-- キラキラ -->
+        <circle cx="52" cy="6" r="2" fill="#FFD6E0" opacity="0.9"/>
+        <circle cx="58" cy="12" r="1.5" fill="#FFD6E0" opacity="0.7"/>
+        <circle cx="55" cy="3" r="1" fill="white" opacity="0.8"/>
+      </svg>
+    </div>
+
+    <h1>ピンキースレッジハンマー</h1>
+    <p class="tagline">あなたの固定観念を、にっこりブチ壊す</p>
+  </header>
+
+  <div class="bubble">
+    モヤモヤを投げ込んでみて。<br>
+    ノーマルな答えから、ちょっとズレた答え、<strong>予想外の答え</strong>まで返すよ。<br>
+    <small style="color:var(--purple2)">…まだ上があるかもしれないけど🔨</small>
+  </div>
+
+  <div class="input-wrap">
+    <span class="input-label">MOYAMOYA INPUT</span>
+    <textarea id="input" placeholder="愚痴でも、不満でも、一言でも。&#10;例：上司の承認がいつも遅い" maxlength="400"></textarea>
+    <div class="char-hint"><span id="charCount">0</span> / 400</div>
+  </div>
+
+  <button class="forge-btn" id="forgeBtn" onclick="forge()">⚒ ガチャン！</button>
+
+  <div class="loading" id="loading">
+    <div class="bounce-dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="loading-text">ハンマー充電中…</div>
+  </div>
+
+  <div class="error-msg" id="errorMsg">うまく叩けなかった。もう一回投げて！</div>
+
+  <div class="output-section" id="output">
+    <div id="cards"></div>
+
+    <!-- もっと飛ぶボタン -->
+    <div class="more-btn-wrap" id="moreBtnWrap">
+      <p style="text-align:center; font-size:13px; color:var(--purple); margin-bottom:10px; font-weight:500;">まだモヤモヤしてる？</p>
+      <button class="more-btn" id="moreBtn" onclick="forgeHyper()">
+        🔨 とどめの一撃、召し上がれ
+      </button>
+    </div>
+
+    <div class="hyper-loading" id="hyperLoading">
+      <div class="hyper-loading-text">⚡ 次元を超えて叩き直し中…</div>
+    </div>
+
+    <div id="hyperCard"></div>
+  </div>
+
+  <footer>Pinky Sledgehammer — 固定観念、叩いてこ</footer>
+</div>
+
+<script>
+const textarea = document.getElementById('input');
+const charCount = document.getElementById('charCount');
+textarea.addEventListener('input', () => { charCount.textContent = textarea.value.length; });
+
+let currentInput = '';
+
+const systemPrompt = `あなたは「ピンキースレッジハンマー」というキャラクターです。
+ユーザーのモヤモヤ・悩みを受け取り、3段階の解決策を提示します。
+
+キャラクター：にっこりしながら固定観念をブチ壊す存在。怖くないけど油断すると予想外の場所に連れていく。
+
+出力はJSON形式のみ。構造：
+{
+  "essence": "モヤモヤの本質（15字以内）",
+  "cards": [
+    {
+      "level": "NORMAL",
+      "emoji": "（絵文字1つ）",
+      "title": "定番の解決策タイトル",
+      "body": "王道の対処法。共感から入り丁寧に2文で。",
+      "action": "今日すぐできる一手"
+    },
+    {
+      "level": "JOY",
+      "emoji": "（絵文字1つ）",
+      "title": "ちょっとズレた解決策タイトル",
+      "body": "少し視点を変えた、意外だけど納得感ある方法。2文で。",
+      "action": "試してみる小さな実験"
+    },
+    {
+      "level": "EXTREME",
+      "emoji": "（絵文字1つ）",
+      "title": "スケボー的発想タイトル",
+      "body": "足が不自由になったとき杖じゃなくスケボーを提案するような、世の中にあるが普通は選ばない方法。にっこり2文で。",
+      "action": "飛び込む前に試す一歩"
+    }
+  ]
+}
+必ずJSONのみ返すこと。トーン：温かく、ユーモアあり、説教しない。`;
+
+const hyperPrompt = `あなたは「ピンキースレッジハンマー HYPER MODE」です。
+EXTREMEのさらに上、「モヤモヤの土俵に乗らない」発想を1つ提示します。
+
+■ HYPER EXTREMEの本質：
+「問題を解決しに行かない。問題の発生条件ごと消すか、エネルギー源に変える。」
+
+■ 判定基準：
+- モヤモヤの要求に応えていない
+- モヤモヤが生まれる前提・構造・物差しごとひっくり返している
+- 怒る人もいるかもしれないが、眠っていた才能が爆発する可能性がある
+- 実在する、または近未来に登場しそうな手法（純粋なSFは避ける）
+- にっこりしながら、でも本気
+
+■ 実例（これがHYPERの温度感）：
+
+【業務改善】
+モヤモヤ：事務処理が多くて大変
+NORMAL=一個ずつ効率化、JOY=RPA自動化、EXTREME=AI化して判断だけ残す
+HYPER=「その業務、そもそも必要ですか？」と上に問いかけて丸ごと廃止させる
+
+【マラソン】
+モヤモヤ：記録が伸びなくてつまらない
+NORMAL=練習メニュー見直し、JOY=シューズ変える、EXTREME=ウルトラマラソンで距離で満足
+HYPER=トレイルランに転向。「タイム」という物差しごと捨てて別のゲームに乗り移る
+
+【修学旅行の報告】
+モヤモヤ：親に報告しろとぷりぷり言われる
+NORMAL=帰ってから報告、JOY=写真LINEで送る、EXTREME=リアルタイム投稿
+HYPER=YouTuberになって京都観光動画を上げたらバズって1万人に届ける。親より先に世界が見てる
+
+【忘れ物】
+モヤモヤ：忘れ物が多くていつも怒られる
+NORMAL=チェックリスト、JOY=スマートタグ、EXTREME=前日に全部準備する仕組み
+HYPER=スマホと鍵だけで通勤する設計にする。その他は会社と家に二セット置いておく。忘れるものを消滅させる
+
+【ジムニー乗れない】
+モヤモヤ：ジムニーを買ったけど住む場所と離れていてなかなか乗れない、もったいない
+NORMAL=週末ドライブの予定を入れる、JOY=カーシェア登録で維持費を下げる、EXTREME=車内を書斎化して乗る理由を作る
+HYPER=ジムニーに住む。乗れない理由が距離なら、距離ごと消せばいい。住んでしまえばフラストレーションは発生しない。その生活がコンテンツになるのはその後の話
+
+■ 共通構造：
+モヤモヤの土俵に乗らない。要求・制約・問題の発生条件ごと消すか、エネルギー源に変える。
+HYPERは「改善・活用」ではなく「文脈の引越し」。その物・状況・人間関係を丸ごと別の文脈に移動させる。
+
+■ 賢者降臨の条件（あなたが判断する）：
+以下のいずれかに該当する場合、通常HYPERではなく「賢者降臨モード」で回答する：
+- 人間関係・感情・承認欲求・孤独が核心にある
+- テクノロジーや手法では本質的に届かない
+- 「正しい答え」より「問いそのものを変える」が必要な場合
+- 解決より「そのままでいい理由」を示す方が有効な場合
+
+賢者降臨モード時のルール：
+- bodyの冒頭に必ず「ちょっと別の人に来てもらいました。」と入れる
+- 賢者は名前を名乗らない、正体不明のまま
+- 論理で解決しに行かない。むしろ問題をもっと奇妙な場所に連れていく
+- ズレてるようで、でも深いところを突いてくる
+- 最後は「それでいいんじゃないですか」か「で、どうしたいですか」で締める
+
+■ 通常HYPER出力：
+{
+  "mode": "hyper",
+  "emoji": "（絵文字1つ）",
+  "title": "土俵ごとひっくり返すタイトル（短く、毒あり）",
+  "body": "その発想の説明。にっこりしながら本気で。なぜ前提ごとひっくり返せるかを示す。眠っていた可能性に触れる。2〜3文。",
+  "action": "これを試すなら最初の一歩"
+}
+
+■ 賢者降臨出力：
+{
+  "mode": "kenja",
+  "emoji": "🌀",
+  "title": "賢者が来てしまった",
+  "body": "ちょっと別の人に来てもらいました。（その後、ズレた角度から本質を突く。2〜3文。）「それでいいんじゃないですか」か「で、どうしたいですか」で締める。",
+  "action": "何もしなくていいかもしれない、または：唯一やるとしたらこれ"
+}
+
+必ずJSONのみ返すこと。modeフィールドを必ず含めること。`;
+
+async function forge() {
+  const input = textarea.value.trim();
+  if (!input) return;
+  currentInput = input;
+
+  const btn = document.getElementById('forgeBtn');
+  const loading = document.getElementById('loading');
+  const output = document.getElementById('output');
+  const cards = document.getElementById('cards');
+  const errorMsg = document.getElementById('errorMsg');
+  const moreBtnWrap = document.getElementById('moreBtnWrap');
+  const hyperCard = document.getElementById('hyperCard');
+
+  btn.disabled = true;
+  btn.textContent = '叩いてます…';
+  loading.classList.add('show');
+  output.classList.remove('visible');
+  errorMsg.style.display = 'none';
+  cards.innerHTML = '';
+  hyperCard.innerHTML = '';
+  moreBtnWrap.classList.remove('show');
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: "user", content: input }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
+    renderCards(result);
+    moreBtnWrap.classList.add('show');
+
+  } catch(e) {
+    errorMsg.style.display = 'block';
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⚒ ガチャン！';
+    loading.classList.remove('show');
+  }
+}
+
+async function forgeHyper() {
+  const moreBtn = document.getElementById('moreBtn');
+  const moreBtnWrap = document.getElementById('moreBtnWrap');
+  const hyperLoading = document.getElementById('hyperLoading');
+  const hyperCard = document.getElementById('hyperCard');
+
+  moreBtn.disabled = true;
+  moreBtn.textContent = '飛んでます…';
+  hyperLoading.classList.add('show');
+  hyperCard.innerHTML = '';
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 600,
+        system: hyperPrompt,
+        messages: [{ role: "user", content: currentInput }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const card = JSON.parse(clean);
+    renderHyperCard(card);
+    moreBtnWrap.classList.remove('show');
+
+  } catch(e) {
+    moreBtn.disabled = false;
+    moreBtn.textContent = '🚀 まだ上がある… HYPER EXTREME へ';
+    console.error(e);
+  } finally {
+    hyperLoading.classList.remove('show');
+  }
+}
+
+function renderCards(result) {
+  const cards = document.getElementById('cards');
+  const output = document.getElementById('output');
+
+  const ess = document.createElement('div');
+  ess.className = 'essence-banner';
+  ess.innerHTML = `<div class="essence-label">ESSENCE</div><div class="essence-text">${result.essence}</div>`;
+  cards.appendChild(ess);
+
+  const levels = ['normal', 'joy', 'extreme'];
+  result.cards.forEach((card, i) => {
+    const el = document.createElement('div');
+    el.className = `card ${levels[i]}`;
+    el.style.animationDelay = `${i * 0.12}s`;
+    el.innerHTML = `
+      <div class="card-header">
+        <span class="card-badge">${card.level}</span>
+        <span class="card-emoji">${card.emoji}</span>
+      </div>
+      <div class="card-title">${card.title}</div>
+      <div class="card-body">${card.body}</div>
+      <div class="card-action">${card.action}</div>
+    `;
+    cards.appendChild(el);
+  });
+
+  output.classList.add('visible');
+  setTimeout(() => output.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+function renderHyperCard(card) {
+  const hyperCard = document.getElementById('hyperCard');
+  const isKenja = card.mode === 'kenja';
+  const el = document.createElement('div');
+  el.className = `card ${isKenja ? 'kenja' : 'hyper'}`;
+  el.style.animationDelay = '0s';
+  el.innerHTML = `
+    <div class="card-header">
+      <span class="card-badge">${isKenja ? '🌀 賢者降臨' : '⚡ HYPER EXTREME'}</span>
+      <span class="card-emoji">${card.emoji}</span>
+    </div>
+    <div class="card-title">${card.title}</div>
+    <div class="card-body">${card.body}</div>
+    <div class="card-action">${card.action}</div>
+  `;
+  hyperCard.appendChild(el);
+  setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+}
+</script>
+</body>
+</html>
