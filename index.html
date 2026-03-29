@@ -891,6 +891,7 @@ function resetAll() {
   // 入力欄をクリア
   textarea.value = '';
   charCount.textContent = '0';
+  currentInput = '';
   // 出力をリセット
   document.getElementById('cards').innerHTML = '';
   document.getElementById('hyperCard').innerHTML = '';
@@ -898,6 +899,12 @@ function resetAll() {
   document.getElementById('moreBtnWrap').classList.remove('show');
   document.getElementById('resetWrap').classList.remove('show');
   document.getElementById('errorMsg').style.display = 'none';
+  // moreBtnの状態をリセット
+  const moreBtn = document.getElementById('moreBtn');
+  moreBtn.disabled = false;
+  moreBtn.textContent = '🔨 とどめの一撃、召し上がれ';
+  // hyperLoadingも念のためリセット
+  document.getElementById('hyperLoading').classList.remove('show');
   // 入力欄にフォーカスして上に戻る
   window.scrollTo({ top: 0, behavior: 'smooth' });
   setTimeout(() => textarea.focus(), 400);
