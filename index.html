@@ -378,6 +378,74 @@
   .error-msg { text-align: center; color: var(--pink); font-size: 13px; padding: 20px; display: none; }
 
   footer { text-align: center; margin-top: 60px; font-size: 11px; color: var(--purple2); letter-spacing: 0.15em; }
+
+  /* APIキーエリア */
+  .apikey-wrap {
+    background: white;
+    border: 2px dashed var(--purple2);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+
+  .apikey-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--purple);
+    letter-spacing: 0.2em;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .apikey-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .apikey-input {
+    flex: 1;
+    border: 1.5px solid var(--purple2);
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    outline: none;
+    background: var(--bg);
+  }
+
+  .apikey-input:focus { border-color: var(--purple); }
+
+  .apikey-save {
+    background: var(--purple);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .apikey-save:hover { background: var(--purple2); }
+
+  .apikey-hint {
+    font-size: 11px;
+    color: var(--purple2);
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+
+  .apikey-ok {
+    font-size: 11px;
+    color: var(--pink);
+    font-weight: 700;
+    margin-top: 6px;
+    display: none;
+  }
 </style>
 </head>
 <body>
@@ -443,8 +511,21 @@
     </div>
 
     <h1>ピンキースレッジハンマー</h1>
+    <p style="font-family:'Zen Maru Gothic',sans-serif; font-size:13px; color:var(--purple2); letter-spacing:0.2em; margin-bottom:4px;">桃色巨鎚</p>
     <p class="tagline">あなたの固定観念を、にっこりブチ壊す</p>
   </header>
+
+  <div class="apikey-wrap">
+    <span class="apikey-label">API KEY</span>
+    <div class="apikey-row">
+      <input class="apikey-input" type="password" id="apikeyInput" placeholder="sk-ant-..." />
+      <button class="apikey-save" onclick="saveApiKey()">保存</button>
+    </div>
+    <div class="apikey-hint">
+      Anthropic APIキーを入力してください。<a href="https://console.anthropic.com/" target="_blank" style="color:var(--purple)">console.anthropic.com</a> で取得できます。<br>キーはこのブラウザにのみ保存されます。
+    </div>
+    <div class="apikey-ok" id="apikeyOk">🔨 キー保存済み、叩けるよ！</div>
+  </div>
 
   <div class="bubble">
     モヤモヤを投げ込んでみて。<br>
@@ -494,6 +575,28 @@
 const textarea = document.getElementById('input');
 const charCount = document.getElementById('charCount');
 textarea.addEventListener('input', () => { charCount.textContent = textarea.value.length; });
+
+// APIキー管理
+function saveApiKey() {
+  const key = document.getElementById('apikeyInput').value.trim();
+  if (!key) return;
+  localStorage.setItem('pinky_apikey', key);
+  document.getElementById('apikeyOk').style.display = 'block';
+  document.getElementById('apikeyInput').value = '•'.repeat(20);
+}
+
+function getApiKey() {
+  return localStorage.getItem('pinky_apikey') || '';
+}
+
+// 起動時にキーが保存済みなら表示
+window.addEventListener('load', () => {
+  const saved = getApiKey();
+  if (saved) {
+    document.getElementById('apikeyInput').value = '•'.repeat(20);
+    document.getElementById('apikeyOk').style.display = 'block';
+  }
+});
 
 let currentInput = '';
 
@@ -614,6 +717,12 @@ async function forge() {
   if (!input) return;
   currentInput = input;
 
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    alert('APIキーを入力して保存してください。');
+    return;
+  }
+
   const btn = document.getElementById('forgeBtn');
   const loading = document.getElementById('loading');
   const output = document.getElementById('output');
@@ -634,7 +743,12 @@ async function forge() {
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 1000,
@@ -666,6 +780,12 @@ async function forgeHyper() {
   const hyperLoading = document.getElementById('hyperLoading');
   const hyperCard = document.getElementById('hyperCard');
 
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    alert('APIキーを入力して保存してください。');
+    return;
+  }
+
   moreBtn.disabled = true;
   moreBtn.textContent = '飛んでます…';
   hyperLoading.classList.add('show');
@@ -674,7 +794,12 @@ async function forgeHyper() {
   try {
     const res = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
       body: JSON.stringify({
         model: "claude-sonnet-4-20250514",
         max_tokens: 600,
